@@ -1,5 +1,5 @@
 (ns gedcom.core
-  (:use [clojure.java.io :only [reader input-stream]])
+  (:require [clojure.java.io :refer [reader input-stream]])
   (:import org.apache.commons.io.input.BOMInputStream
            java.io.InputStreamReader))
 
@@ -51,7 +51,7 @@
       parent)))
 
 (defn gedcom-record-seq
-  "Parse a GEDCOM record from a sequence returning a lazy-seq of hashes."
+  "Parse a GEDCOM record from a sequence, returning a lazy-seq of hashes."
   [gedcom-lines]
   (lazy-seq
    (if (seq (rest gedcom-lines))
@@ -80,8 +80,14 @@
   "Parses GEDCOM records from a file or reader, returning a seq of records.
    Takes an optional encoding."
   [in & [encoding]]
-  (->> in input-stream BOMInputStream. (gedcom-reader encoding) line-seq
-       (map gedcom-line) gedcom-line-seq gedcom-record-seq))
+  (->> in
+       input-stream
+       BOMInputStream.
+       (gedcom-reader encoding)
+       line-seq
+       (map gedcom-line)
+       gedcom-line-seq
+       gedcom-record-seq))
 
 (defn parse-gedcom-records
   "Parses GEDCOM record from a file or reader, returning a seq of records."
